@@ -47,7 +47,7 @@ function replaceCrawlUrlsWithAnchors($text)
 								$http_prefixed = true;
 							}
 						}
-						if(!$http_prefixed)//position is http prefix included
+						if(!$http_prefixed)
 						{
 							$link_text = substr($word, $first_position,$last_position+1);
 							$link =  "<a target='_blank' href='http://".$link_text."'>".$link_text."</a>";
