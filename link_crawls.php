@@ -1,6 +1,6 @@
 <?php
 
-function replaceCrawlUrlsWithAnchors($text)
+function crawl_urls_replace_anchors($text)
 {
 	$shortest_url_len = 7;
 	if(strlen($text)>=$shortest_url_len)
