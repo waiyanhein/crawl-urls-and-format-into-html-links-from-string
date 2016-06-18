@@ -11,9 +11,24 @@ function crawl_urls_replace_anchors($text)
 			$crawled_words = array();
 			foreach($words as $word)
 			{
-				if(!empty($word) and strlen($word)>$shortest_url_len and strpos(strtolower($word), "www")>-1)
+				$check_by_http = false;
+				if(!empty($word) and strlen($word)>$shortest_url_len and (strpos(strtolower($word), "https://")>-1 or strpos(strtolower($word), "http://")>-1 or strpos(strtolower($word), "www")>-1))
 				{
-					$first_position = strpos(strtolower($word), "www");
+					$first_position = 0;
+					if(strpos(strtolower($word), "www")>-1)
+					{
+						$first_position = strpos(strtolower($word), "www");
+					}
+					else{
+						if(strpos(strtolower($word), "https://"))
+						{
+							$first_position = strpos(strtolower($word), "https://");
+						}
+						else{
+							$first_position = strpos(strtolower($word), "http://");
+						}
+						$check_by_http = true;
+					}
 					$last_position = 0;
 					for($i=strlen($word)-1;$i>-1;$i--)
 					{
@@ -26,25 +41,31 @@ function crawl_urls_replace_anchors($text)
 					{
 						$http_prefixed = false;
 
-						if($first_position>7)//check https prefix
+						if($check_by_http)
 						{
-							$https_prefix_first_position = $first_position - 8;
-							$https = substr($word, $https_prefix_first_position ,8);
-							if(strtolower($https)=="https://")
-							{
-
-								$first_position = $https_prefix_first_position;
-								$http_prefixed = true;
-							}
+							$http_prefixed = true;
 						}
-						if(!$http_prefixed and $first_position>=6)
-						{
-							$http_prefix_first_position = $first_position - 7;
-							$http = substr($word, $http_prefix_first_position ,7);
-							if(strtolower($http)=="http://")
+						else{
+							if($first_position>7)
 							{
-								$first_position = $http_prefix_first_position;
-								$http_prefixed = true;
+								$https_prefix_first_position = $first_position - 8;
+								$https = substr($word, $https_prefix_first_position ,8);
+								if(strtolower($https)=="https://")
+								{
+
+									$first_position = $https_prefix_first_position;
+									$http_prefixed = true;
+								}
+							}
+							if(!$http_prefixed and $first_position>=6)
+							{
+								$http_prefix_first_position = $first_position - 7;
+								$http = substr($word, $http_prefix_first_position ,7);
+								if(strtolower($http)=="http://")
+								{
+									$first_position = $http_prefix_first_position;
+									$http_prefixed = true;
+								}
 							}
 						}
 						if(!$http_prefixed)
